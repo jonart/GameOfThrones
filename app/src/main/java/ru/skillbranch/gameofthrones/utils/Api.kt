@@ -6,5 +6,5 @@ import ru.skillbranch.gameofthrones.data.remote.res.HouseRes
 
 interface Api {
     @GET("/houses")
-    fun getHouses(): Single<HouseRes>
+    fun getHouses(): Single<List<HouseRes>>
 }

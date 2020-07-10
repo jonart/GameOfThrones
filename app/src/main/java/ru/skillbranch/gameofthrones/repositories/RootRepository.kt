@@ -1,10 +1,13 @@
 package ru.skillbranch.gameofthrones.repositories
 
 import androidx.annotation.VisibleForTesting
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import ru.skillbranch.gameofthrones.data.local.entities.CharacterFull
 import ru.skillbranch.gameofthrones.data.local.entities.CharacterItem
 import ru.skillbranch.gameofthrones.data.remote.res.CharacterRes
 import ru.skillbranch.gameofthrones.data.remote.res.HouseRes
+import ru.skillbranch.gameofthrones.utils.RestApiService
 
 object RootRepository {
 
@@ -13,17 +16,26 @@ object RootRepository {
      * @param result - колбек содержащий в себе список данных о домах
      */
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    fun getAllHouses(result : (houses : List<HouseRes>) -> Unit) {
-        //TODO implement me
+    fun getAllHouses(result: (houses: List<HouseRes>) -> Unit) {
+        RestApiService.getRetrofit().getHouses()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSuccess {
+                if (it.isNotEmpty()) {
+                    result.invoke(it)
+                }
+            }
+            .doOnError {}
+            .subscribe()
     }
 
     /**
-     * Получение данных о требуемых домах по их полным именам из сети 
+     * Получение данных о требуемых домах по их полным именам из сети
      * @param houseNames - массив полных названий домов (смотри AppConfig)
      * @param result - колбек содержащий в себе список данных о домах
      */
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    fun getNeedHouses(vararg houseNames: String, result : (houses : List<HouseRes>) -> Unit) {
+    fun getNeedHouses(vararg houseNames: String, result: (houses: List<HouseRes>) -> Unit) {
         //TODO implement me
     }
 
@@ -33,7 +45,10 @@ object RootRepository {
      * @param result - колбек содержащий в себе список данных о доме и персонажей в нем (Дом - Список Персонажей в нем)
      */
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    fun getNeedHouseWithCharacters(vararg houseNames: String, result : (houses : List<Pair<HouseRes, List<CharacterRes>>>) -> Unit) {
+    fun getNeedHouseWithCharacters(
+        vararg houseNames: String,
+        result: (houses: List<Pair<HouseRes, List<CharacterRes>>>) -> Unit
+    ) {
         //TODO implement me
     }
 
@@ -44,7 +59,7 @@ object RootRepository {
      * @param complete - колбек о завершении вставки записей db
      */
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    fun insertHouses(houses : List<HouseRes>, complete: () -> Unit) {
+    fun insertHouses(houses: List<HouseRes>, complete: () -> Unit) {
         //TODO implement me
     }
 
@@ -55,7 +70,7 @@ object RootRepository {
      * @param complete - колбек о завершении вставки записей db
      */
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    fun insertCharacters(Characters : List<CharacterRes>, complete: () -> Unit) {
+    fun insertCharacters(Characters: List<CharacterRes>, complete: () -> Unit) {
         //TODO implement me
     }
 
@@ -75,7 +90,7 @@ object RootRepository {
      * @param result - колбек содержащий в себе список краткой информации о персонажах дома
      */
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    fun findCharactersByHouseName(name : String, result: (characters : List<CharacterItem>) -> Unit) {
+    fun findCharactersByHouseName(name: String, result: (characters: List<CharacterItem>) -> Unit) {
         //TODO implement me
     }
 
@@ -86,7 +101,7 @@ object RootRepository {
      * @param result - колбек содержащий в себе полную информацию о персонаже
      */
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    fun findCharacterFullById(id : String, result: (character : CharacterFull) -> Unit) {
+    fun findCharacterFullById(id: String, result: (character: CharacterFull) -> Unit) {
         //TODO implement me
     }
 
@@ -94,7 +109,7 @@ object RootRepository {
      * Метод возвращет true если в базе нет ни одной записи, иначе false
      * @param result - колбек о завершении очистки db
      */
-    fun isNeedUpdate(result: (isNeed : Boolean) -> Unit){
+    fun isNeedUpdate(result: (isNeed: Boolean) -> Unit) {
         //TODO implement me
     }
 
